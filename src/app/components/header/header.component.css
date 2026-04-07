@@ -1,0 +1,87 @@
+/* Moviendo los estilos del header aquí */
+.custom-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  background-color: black;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 120px; /* Aumentado para dar aire al logo grande */
+  box-sizing: border-box;
+}
+
+.logo {
+  width: 240px; 
+  height: auto;
+  max-height: 90px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.botones {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.95);
+  padding: 20px;
+  text-align: center;
+  gap: 10px;
+}
+
+.menu-abierto {
+  display: flex !important;
+}
+
+@media (min-width: 1024px) {
+  .menu-toggle { display: none; }
+  .botones {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    background: transparent;
+    width: auto;
+    padding: 0;
+    margin-right: 50px;
+  }
+  .logo { width: 420px; max-height: 110px; } /* Logo mucho más grande en PC */
+}
+
+.btninicio, .btnacercade {
+  color: #FFF;
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: color 0.3s ease;
+  padding: 10px 15px;
+}
+
+.active-link {
+  color: #FFBE2D !important;
+  font-weight: 700 !important;
+}
+
+@media (max-width: 480px) {
+  .logo { width: 200px; }
+}

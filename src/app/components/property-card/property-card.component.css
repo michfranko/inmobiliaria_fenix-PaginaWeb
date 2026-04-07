@@ -1,0 +1,192 @@
+.property-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  width: 100%;
+  height: 500px; 
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.property-card:hover {
+  transform: translateY(-10px);
+  border-color: #FFBE2D;
+  box-shadow: 0 20px 45px rgba(255, 190, 45, 0.1);
+}
+
+/* CONTENEDOR DE IMAGEN CON ALTURA FIJA */
+.property-card-image-container {
+  position: relative;
+  height: 220px; /* Altura fija obligatoria */
+  width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background-color: #111; /* Fondo por si la imagen tarda en cargar */
+}
+
+.imagenProp {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Asegura que la imagen llene el espacio sin deformarse */
+  transition: transform 0.8s ease;
+}
+
+.property-card:hover .imagenProp {
+  transform: scale(1.1);
+}
+
+/* CONTENIDO DE INFORMACIÓN */
+.property-info-content {
+  padding: 20px;
+  flex-grow: 1; /* Ocupa el espacio restante */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.title-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.title-price-row h3 {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+  /* Truncar texto si el nombre es muy largo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price-tag {
+  font-size: 1.3rem;
+  color: #FFBE2D;
+  font-weight: 900;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.location-text {
+  color: #888;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Truncar ubicación a una sola línea */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.location-text i { color: #FFBE2D; flex-shrink: 0; }
+
+.code-text { font-size: 0.75rem; color: #555; display: flex; align-items: center; gap: 8px; }
+
+.map-indicator {
+  color: #FFBE2D;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  animation: pulse-map 2s infinite;
+}
+
+@keyframes pulse-map {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* PILLS DE ESPECIFICACIONES */
+.specs-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto; /* Empuja las especificaciones hacia abajo */
+  padding-bottom: 5px;
+}
+
+.spec-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+.spec-pill i { color: #FFBE2D; }
+
+/* FOOTER FIJO AL FINAL */
+.property-card-footer {
+  background-color: #222;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #333;
+  height: 70px; /* Altura fija para el footer */
+  flex-shrink: 0;
+}
+
+.btn-more-minimal {
+  background: #FFBE2D;
+  color: #000;
+  border: none;
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+
+.btn-more-minimal:hover { background: #FF9B00; }
+
+.footer-actions-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.action-icon-link {
+  background: #333;
+  color: #fff;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.action-icon-link:hover { color: #FFBE2D; }
+.action-icon-link.ws { background: #25D366; }
+
+/* AJUSTES PARA MÓVIL */
+@media (max-width: 500px) {
+  .property-card {
+    height: 480px; /* Un poco más pequeña en móviles */
+  }
+  .property-card-image-container {
+    height: 200px;
+  }
+  .price-tag {
+    font-size: 1.2rem;
+  }
+}

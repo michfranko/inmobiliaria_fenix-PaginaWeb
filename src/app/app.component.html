@@ -1,0 +1,11 @@
+<div class="app-layout">
+  <app-header></app-header>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer *ngIf="mostrarFooter" [compuesto]="esHome"></app-footer>
+</div>
+
+<app-login-modal *ngIf="showLoginModal" (close)="closeLoginModal()"></app-login-modal>

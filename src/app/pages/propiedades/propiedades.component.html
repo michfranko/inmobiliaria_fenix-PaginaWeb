@@ -1,0 +1,24 @@
+<div class="propiedades-container">
+  <h1>Nuestras Propiedades</h1>
+  
+  <div class="grid-propiedades">
+    <div class="card" *ngFor="let property of properties">
+      <div class="image-container">
+        <img [src]="(property.imagenes && property.imagenes.length > 0) ? property.imagenes[0] : 'assets/no-image.svg'" alt="Imagen">
+      </div>
+      
+      <div class="details">
+        <h3>{{ property.TipoPropiedad }}</h3>
+        <p class="precio">${{ property.Precio_Venta }}</p>
+        <p class="ubicacion">{{ property.Direccion_Sector }}</p>
+        
+        <div class="acciones">
+          <a [routerLink]="['/detalle', property.IPD]" class="btn-detalle">Ver más</a>
+          <a [href]="createWhatsappLink(property)" target="_blank" class="btn-ws">
+            <i class="fab fa-whatsapp"></i> Contactar
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

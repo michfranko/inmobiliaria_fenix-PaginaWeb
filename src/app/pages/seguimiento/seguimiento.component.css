@@ -1,0 +1,537 @@
+.seguimiento-page-admin {
+  background-color: #0d0d0d;
+  color: #e0e0e0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.admin-header {
+  background-color: #121212;
+  padding: 25px 40px;
+  border-bottom: 1px solid #1f1f1f;
+  z-index: 10;
+}
+
+.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.admin-header h1 { font-size: 1.6rem; font-weight: 800; }
+.highlight { color: #FFBE2D; }
+
+.stat-pill {
+  background: rgba(255, 190, 45, 0.1);
+  color: #FFBE2D;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Toolbar */
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tabs-admin {
+  display: flex;
+  background: #1a1a1a;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+}
+
+.tabs-admin button {
+  background: transparent;
+  border: none;
+  color: #666;
+  padding: 8px 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.tabs-admin button.active {
+  background: #FFBE2D;
+  color: #000;
+}
+
+.action-buttons-admin { display: flex; gap: 12px; }
+
+/* KANBAN BOARD */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  padding: 30px 40px;
+  flex: 1;
+  align-items: start;
+  overflow-x: auto;
+}
+
+.kanban-column {
+  background: #121212;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 250px);
+  border: 1px solid #1f1f1f;
+}
+
+.column-header {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #1f1f1f;
+  background: #161616;
+  border-radius: 12px 12px 0 0;
+}
+
+.header-main-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.column-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-clean, .btn-restore {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: #888;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-clean:hover {
+  background: #f1c40f;
+  color: #000;
+  border-color: #f1c40f;
+}
+
+.btn-restore:hover {
+  background: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}
+
+.column-header span { font-weight: 800; font-size: 0.85rem; color: #fff; letter-spacing: 0.5px; }
+
+.icon-nuevo { color: #3498db; }
+.icon-proceso { color: #f1c40f; }
+.icon-finalizado { color: #2ecc71; }
+
+.count-badge {
+  margin-left: auto;
+  background: #2a2a2a;
+  color: #888;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+
+.kanban-list {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+/* KANBAN CARDS */
+.kanban-card {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.kanban-card:hover {
+  transform: translateY(-3px);
+  background: #222;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.kanban-card.in-process { border-left-color: #f1c40f; }
+.kanban-card.completed { border-left-color: #2ecc71; }
+
+.card-tag { font-family: monospace; font-weight: 800; color: #FFBE2D; font-size: 0.75rem; margin-bottom: 8px; }
+.card-client { margin: 0 0 10px 0; font-size: 0.95rem; color: #fff; }
+.card-obs { font-size: 0.8rem; color: #666; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-obs.success { color: #2ecc71; font-weight: 600; }
+
+.card-status-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.card-status-badge.visita-agendada { background: rgba(241, 196, 15, 0.1); color: #f1c40f; }
+.card-status-badge.en-negociación { background: rgba(230, 126, 34, 0.1); color: #e67e22; }
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #222;
+  padding-top: 10px;
+  color: #444;
+  font-size: 0.75rem;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-move {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: #888;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-move:hover {
+  background: #FFBE2D;
+  color: #000;
+  border-color: #FFBE2D;
+  transform: scale(1.1);
+}
+
+.btn-move.back:hover {
+  background: #555;
+  color: #fff;
+  border-color: #666;
+}
+
+.btn-move.next:hover {
+  background: #2ecc71;
+  color: #fff;
+  border-color: #2ecc71;
+}
+
+/* Modales */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin-modal-content {
+  background: #121212;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 15px;
+  border: 1px solid #1f1f1f;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header-admin { padding: 25px; border-bottom: 1px solid #1f1f1f; display: flex; justify-content: space-between; align-items: flex-start; }
+.header-titles label { font-size: 0.7rem; font-weight: 800; color: #FFBE2D; text-transform: uppercase; }
+.header-titles h2 { margin: 5px 0 0 0; color: #fff; font-size: 1.3rem; }
+.close-modal-x { background: transparent; border: none; color: #555; font-size: 1.8rem; cursor: pointer; }
+
+.admin-form-grid { padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.form-field.full-width { grid-column: span 2; }
+.form-field label { font-size: 0.75rem; color: #666; font-weight: 700; margin-bottom: 8px; display: block; }
+.form-field select, .form-field textarea { width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; color: #fff; padding: 10px; border-radius: 8px; box-sizing: border-box; }
+
+.form-actions-admin { grid-column: span 2; display: flex; gap: 12px; margin-top: 15px; }
+.btn-save-primary { 
+  flex: 1; 
+  background: #FFBE2D; 
+  color: #000; 
+  font-weight: 800; 
+  border: none; 
+  padding: 12px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 190, 45, 0.2);
+}
+.btn-save-primary:hover {
+  background: #FFC94D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 190, 45, 0.3);
+}
+.btn-delete-admin { 
+  background: transparent; 
+  color: #dc3545; 
+  border: 1px solid #dc3545; 
+  padding: 10px 20px; 
+  border-radius: 8px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  transition: all 0.2s;
+}
+.btn-delete-admin:hover {
+  background: rgba(220, 53, 69, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Timeline */
+.client-history-admin { padding: 0 25px 25px; }
+.client-history-admin h3 { font-size: 0.85rem; color: #444; text-transform: uppercase; margin-bottom: 20px; border-top: 1px solid #1f1f1f; padding-top: 20px; }
+.history-timeline { display: flex; flex-direction: column; gap: 20px; position: relative; }
+.history-timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: #1f1f1f; }
+
+.timeline-item { display: flex; gap: 20px; position: relative; }
+.time-marker { background: #1f1f1f; color: #888; font-size: 0.6rem; font-weight: 800; padding: 4px 8px; border-radius: 10px; z-index: 1; min-width: 40px; text-align: center; }
+.time-content { flex: 1; }
+.time-status { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #FFBE2D; }
+.time-content p { margin: 5px 0 0 0; font-size: 0.85rem; color: #aaa; }
+
+/* --- VISTAS RESPONSIVAS --- */
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 950px) {
+  /* Ocultar Kanban de PC */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Mostrar Vista Móvil */
+  .mobile-only {
+    display: block;
+  }
+
+  /* Ajustes de Header */
+  .admin-header {
+    padding: 15px;
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .header-top h1 {
+    font-size: 1.2rem;
+  }
+
+  .admin-toolbar {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .tabs-admin {
+    display: flex;
+    width: 100%;
+  }
+
+  .tabs-admin button {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 10px;
+  }
+
+  .action-buttons-admin {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-main, .btn-sec {
+    flex: 1;
+    font-size: 0.7rem;
+    padding: 12px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Pestañas de Estado Móviles */
+  .mobile-status-tabs {
+    display: flex;
+    padding: 10px 15px;
+    gap: 8px;
+    background: #121212;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .mobile-status-tabs button {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #666;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    transition: all 0.2s;
+  }
+
+  .mobile-status-tabs button.active {
+    background: rgba(255, 190, 45, 0.1);
+    color: #FFBE2D;
+    border-color: #FFBE2D;
+  }
+
+  /* Tarjetas de Ticket Móvil */
+  .tickets-container-mobile {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .mobile-ticket-card {
+    background: #121212;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .mobile-ticket-card:active {
+    background: #1a1a1a;
+  }
+
+  .ticket-header-mob {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #1f1f1f;
+    padding-bottom: 8px;
+  }
+
+  .ticket-id {
+    font-family: monospace;
+    font-weight: 800;
+    color: #FFBE2D;
+    font-size: 0.8rem;
+  }
+
+  .ticket-date {
+    font-size: 0.7rem;
+    color: #555;
+    font-weight: 700;
+  }
+
+  .client-name-mob {
+    margin: 0 0 8px 0;
+    font-size: 1.05rem;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .ticket-obs-mob {
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .status-badge-mob {
+    font-size: 0.6rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .status-badge-mob.visita-agendada { color: #3498db; background: rgba(52, 152, 219, 0.1); }
+  .status-badge-mob.en-negociación { color: #f1c40f; background: rgba(241, 196, 15, 0.1); }
+
+  .ticket-footer-mob {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #1f1f1f;
+    text-align: right;
+  }
+
+  .tap-to-edit {
+    font-size: 0.65rem;
+    color: #FFBE2D;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .empty-msg-mobile {
+    text-align: center;
+    padding: 40px;
+    color: #444;
+    font-size: 0.9rem;
+  }
+
+  /* Ajuste de Modal en Móvil */
+  .admin-modal-content {
+    width: 95% !important;
+    margin: 10px auto;
+    max-height: 90vh;
+    padding: 20px !important;
+    overflow-y: auto;
+  }
+
+  .admin-form-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .form-actions-admin {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-save-primary, .btn-delete-admin {
+    width: 100%;
+  }
+
+  .form-field.full-width {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 1000px) {
+  .kanban-board.desktop-only { display: none; }
+}

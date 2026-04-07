@@ -1,0 +1,142 @@
+<main class="home-wrapper">
+
+  <!-- ========================================== -->
+  <!-- VISTA ESCRITORIO (PC)                      -->
+  <!-- ========================================== -->
+  <div class="desktop-home" *ngIf="!isMobile">
+    <section class="todo" role="region" aria-label="Introducción">
+      <section class="videos">
+        <!-- Video Optimizado: preload="auto" y playsinline para carga inmediata -->
+        <video #videoPlayer class="video" autoplay loop playsinline muted preload="auto" aria-hidden="true" poster="assets/imagenes/venta.jpg">
+          <source src="assets/imagenes/Comp 1_2_1.mp4" type="video/mp4">
+        </video>
+      </section>
+      <div class="hero-container">
+          <div class="main-cta-area">
+              <h1>Inmobiliaria Fenix</h1>
+              <p>Encuentre su vivienda, terreno o proyecto soñado a un precio increíble.</p>
+              <button class="search-button" (click)="goToCatalogo()" aria-label="Ver catálogo de propiedades">Ver Catálogo</button>
+          </div>
+      </div>
+    </section>
+
+    <section class="dest-section">
+      <div class="dest">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        <h2>PROPIEDADES DESTACADAS</h2>
+      </div>
+
+      <div class="status-tabs-container" role="tablist">
+        <button [class.active]="activeStatus === 'VENTA'" (click)="setStatus('VENTA')" role="tab" [attr.aria-selected]="activeStatus === 'VENTA'">EN VENTA</button>
+        <button [class.active]="activeStatus === 'RENTA'" (click)="setStatus('RENTA')" role="tab" [attr.aria-selected]="activeStatus === 'RENTA'">EN RENTA</button>
+      </div>
+
+      <div class="featured-static-grid" *ngIf="displayProperties.length > 0">
+        <app-property-card 
+          *ngFor="let property of displayProperties; let i = index"
+          [property]="property"
+          [priority]="i < 2"
+          (viewDetail)="openPropertyDetail($event)">
+        </app-property-card>
+      </div>
+    </section>
+
+    <div class="view-all-container">
+      <button class="btn-view-all" (click)="goToCatalogo()" aria-label="Ver todas las propiedades del catálogo">Ver todo el catálogo</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISTA MÓVIL                                -->
+  <!-- ========================================== -->
+  <div class="mobile-home" *ngIf="isMobile">
+    
+    <header class="m-hero" role="banner">
+      <video class="m-hero-video" autoplay loop playsinline muted preload="auto" aria-hidden="true" poster="assets/imagenes/venta.jpg">
+        <source src="assets/imagenes/Comp 1_2_1.mp4" type="video/mp4">
+      </video>
+      <div class="m-hero-overlay"></div>
+      <div class="m-hero-content">
+        <h1>Inmobiliaria <span class="gold">Fenix</span></h1>
+        <p>Tu próximo hogar está aquí</p>
+        <button class="m-catalogo-btn" (click)="goToCatalogo()" aria-label="Explorar catálogo completo">
+          EXPLORAR CATÁLOGO <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <section class="m-categories" aria-label="Categorías principales">
+      <h2>Explorar</h2>
+      <div class="m-cat-grid">
+        <div class="m-cat-item" (click)="goToCatalogo('CASA')" role="button" aria-label="Ver casas">
+          <div class="icon-box"><i class="fas fa-home" aria-hidden="true"></i></div>
+          <span>Casas</span>
+        </div>
+        <div class="m-cat-item" (click)="goToCatalogo('DEPARTAMENTO')" role="button" aria-label="Ver departamentos">
+          <div class="icon-box"><i class="fas fa-building" aria-hidden="true"></i></div>
+          <span>Deptos.</span>
+        </div>
+        <div class="m-cat-item" (click)="goToCatalogo('TERRENO')" role="button" aria-label="Ver terrenos">
+          <div class="icon-box"><i class="fas fa-mountain" aria-hidden="true"></i></div>
+          <span>Terrenos</span>
+        </div>
+        <div class="m-cat-item" (click)="goToCatalogo()" role="button" aria-label="Ver más categorías">
+          <div class="icon-box plus"><i class="fas fa-plus" aria-hidden="true"></i></div>
+          <span>Ver Más</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="m-featured">
+      <div class="m-section-header">
+        <h2>Destacados en {{ activeStatus }}</h2>
+        <div class="m-toggle-status" role="group" aria-label="Cambiar estado">
+          <button [class.active]="activeStatus === 'VENTA'" (click)="setStatus('VENTA')" aria-label="Ver destacados en venta">Venta</button>
+          <button [class.active]="activeStatus === 'RENTA'" (click)="setStatus('RENTA')" aria-label="Ver destacados en renta">Renta</button>
+        </div>
+      </div>
+
+      <div class="m-property-feed">
+        <article class="m-card-premium" *ngFor="let property of displayProperties">
+          <div class="m-card-image" (click)="openPropertyDetail(property.IPD)" role="button" aria-label="Ver detalles de la propiedad">
+            <img 
+              [src]="(property.imagenes && property.imagenes.length > 0) ? property.imagenes[0] : 'assets/no-image.svg'" 
+              width="400" 
+              height="220" 
+              loading="lazy" 
+              alt="Propiedad en {{ property.Direccion_Sector }}" />
+            <span class="m-badge">{{ property.TipoPropiedad }}</span>
+          </div>
+          <div class="m-card-info">
+            <div class="m-info-top" (click)="openPropertyDetail(property.IPD)">
+              <h3 class="m-price">${{ property.Precio_Venta }}</h3>
+              <p class="m-loc">{{ property.Direccion_Sector }}</p>
+            </div>
+            <div class="m-specs-row">
+              <span *ngIf="property.HAB"><i class="fas fa-bed" aria-hidden="true"></i> {{ property.HAB }}</span>
+              <span *ngIf="property.BNO"><i class="fas fa-bath" aria-hidden="true"></i> {{ property.BNO }}</span>
+              <span><i class="fas fa-expand" aria-hidden="true"></i> {{ property.AreaCons }}m²</span>
+            </div>
+            <div class="m-card-actions">
+              <button class="m-btn-detail-gold" (click)="openPropertyDetail(property.IPD)" aria-label="Ver detalles completos">VER DETALLE</button>
+              <a [href]="createWhatsappLink(property)" target="_blank" class="m-action-wa" aria-label="Contactar por WhatsApp">
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <button class="m-btn-all" (click)="goToCatalogo()" aria-label="Navegar al catálogo completo">VER TODO EL CATÁLOGO</button>
+    </section>
+
+  </div>
+
+  <app-detalle-propiedad 
+    *ngIf="selectedPropertyId" 
+    [propertyIdInput]="selectedPropertyId" 
+    [propertyInput]="selectedProperty"
+    (close)="closePropertyDetail()">
+  </app-detalle-propiedad>
+
+</main>

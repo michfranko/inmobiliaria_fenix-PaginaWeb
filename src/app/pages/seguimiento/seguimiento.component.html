@@ -1,0 +1,234 @@
+<div class="seguimiento-page-admin">
+  
+  <!-- Encabezado de Gestión -->
+  <header class="admin-header">
+    <div class="header-top">
+      <h1>Panel de <span class="highlight">Tickets</span></h1>
+      <div class="header-stats">
+        <span class="stat-pill">{{ seguimientosFiltrados.length }} Tickets en Tablero</span>
+      </div>
+    </div>
+    
+    <div class="admin-toolbar">
+      <div class="tabs-admin">
+        <button [class.active]="tipoFiltro === 'venta'" (click)="tipoFiltro = 'venta'">VENTAS</button>
+        <button [class.active]="tipoFiltro === 'renta'" (click)="tipoFiltro = 'renta'">RENTAS</button>
+      </div>
+      
+      <div class="action-buttons-admin">
+        <button class="btn-main" (click)="abrirModalParaNuevo()">
+          <i class="fas fa-plus"></i> NUEVO TICKET
+        </button>
+        <button class="btn-sec" (click)="generarPDF(tipoFiltro)">
+          <i class="fas fa-file-pdf"></i> REPORTE TICKETS
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABLERO KANBAN DE TICKETS (VISTA PC) -->
+  <div class="kanban-board desktop-only">
+    
+    <!-- Columna 1: TICKETS RECIBIDOS (Nuevos) -->
+    <div class="kanban-column">
+      <div class="column-header">
+        <i class="fas fa-ticket-alt icon-nuevo"></i>
+        <span>TICKETS RECIBIDOS</span>
+        <span class="count-badge">{{ getSeguimientosPorColumna('nuevo').length }}</span>
+      </div>
+      <div class="kanban-list">
+        <div *ngFor="let s of getSeguimientosPorColumna('nuevo')" class="kanban-card" (click)="abrirModalParaEditar(s)">
+          <div class="card-tag">Ticket #{{ s.propiedadCodigoIPD }}</div>
+          <h4 class="card-client">{{ obtenerNombreCliente(s.clienteId) }}</h4>
+          <p class="card-obs">{{ s.observaciones || 'Ticket abierto, pendiente de gestión inicial...' }}</p>
+          <div class="card-footer">
+            <span class="card-date"><i class="far fa-clock"></i> {{ s.fecha | date:'dd MMM' }}</span>
+            <div class="quick-actions">
+              <button class="btn-move next" (click)="cambiarEstadoTicket(s, 'visita agendada', $event)" title="Mover a Gestión">
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna 2: EN GESTIÓN -->
+    <div class="kanban-column">
+      <div class="column-header">
+        <i class="fas fa-spinner fa-spin icon-proceso" style="--fa-animation-duration: 3s;"></i>
+        <span>EN GESTIÓN</span>
+        <span class="count-badge">{{ getSeguimientosPorColumna('proceso').length }}</span>
+      </div>
+      <div class="kanban-list">
+        <div *ngFor="let s of getSeguimientosPorColumna('proceso')" class="kanban-card in-process" (click)="abrirModalParaEditar(s)">
+          <div class="card-status-badge" [ngClass]="s.estado.replace(' ', '-')">{{ s.estado }}</div>
+          <div class="card-tag">Ticket #{{ s.propiedadCodigoIPD }}</div>
+          <h4 class="card-client">{{ obtenerNombreCliente(s.clienteId) }}</h4>
+          <div class="card-footer">
+            <span class="card-date"><i class="far fa-calendar-alt"></i> {{ s.fecha | date:'dd MMM' }}</span>
+            <div class="quick-actions">
+              <button class="btn-move back" (click)="cambiarEstadoTicket(s, 'contactado', $event)" title="Regresar a Recibidos">
+                <i class="fas fa-arrow-left"></i>
+              </button>
+              <button class="btn-move next" (click)="cambiarEstadoTicket(s, 'cerrado', $event)" title="Finalizar Ticket">
+                <i class="fas fa-check"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna 3: FINALIZADOS -->
+    <div class="kanban-column">
+      <div class="column-header">
+        <div class="header-main-info">
+          <i class="fas fa-archive icon-finalizado"></i>
+          <span>TICKETS CERRADOS</span>
+          <span class="count-badge">{{ getSeguimientosPorColumna('finalizado').length }}</span>
+        </div>
+        <div class="column-actions">
+          <button class="btn-clean" title="Limpiar visualmente los terminados" (click)="limpiarTicketsFinalizados()" *ngIf="getSeguimientosPorColumna('finalizado').length > 0">
+            <i class="fas fa-broom"></i>
+          </button>
+          <button class="btn-restore" title="Ver ocultos" (click)="restaurarTicketsOcultos()" *ngIf="idsOcultos.size > 0">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div class="kanban-list">
+        <div *ngFor="let s of getSeguimientosPorColumna('finalizado')" class="kanban-card completed" (click)="abrirModalParaEditar(s)">
+          <div class="card-tag">Ticket #{{ s.propiedadCodigoIPD }}</div>
+          <h4 class="card-client">{{ obtenerNombreCliente(s.clienteId) }}</h4>
+          <p class="card-obs success"><i class="fas fa-check"></i> Gestión cerrada correctamente.</p>
+          <div class="card-footer">
+            <span class="card-date"><i class="fas fa-calendar-check"></i> {{ s.fecha | date:'dd MMM' }}</span>
+            <div class="quick-actions">
+              <button class="btn-move back" (click)="cambiarEstadoTicket(s, 'visita agendada', $event)" title="Reabrir Ticket">
+                <i class="fas fa-undo"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VISTA MÓVIL: Lista de Tickets por Estado -->
+  <div class="mobile-only admin-mobile-list">
+    
+    <!-- Selector de Estado para Móvil -->
+    <div class="mobile-status-tabs">
+      <button [class.active]="estadoFiltroMovil === 'nuevo'" (click)="estadoFiltroMovil = 'nuevo'">NUEVOS</button>
+      <button [class.active]="estadoFiltroMovil === 'proceso'" (click)="estadoFiltroMovil = 'proceso'">GESTIÓN</button>
+      <button [class.active]="estadoFiltroMovil === 'finalizado'" (click)="estadoFiltroMovil = 'finalizado'">CERRADOS</button>
+    </div>
+
+    <div class="tickets-container-mobile">
+      <div *ngFor="let s of getSeguimientosPorColumna(estadoFiltroMovil)" 
+           class="mobile-ticket-card" 
+           (click)="abrirModalParaEditar(s)">
+        
+        <div class="ticket-header-mob">
+          <span class="ticket-id">#{{ s.propiedadCodigoIPD }}</span>
+          <span class="ticket-date">{{ s.fecha | date:'dd MMM' }}</span>
+        </div>
+
+        <div class="ticket-body-mob">
+          <h3 class="client-name-mob">{{ obtenerNombreCliente(s.clienteId) }}</h3>
+          <p class="ticket-obs-mob">{{ s.observaciones || 'Sin observaciones iniciales...' }}</p>
+          <div class="ticket-status-row" *ngIf="estadoFiltroMovil === 'proceso'">
+            <span class="status-badge-mob" [ngClass]="s.estado.replace(' ', '-')">{{ s.estado }}</span>
+          </div>
+        </div>
+
+        <div class="ticket-footer-mob">
+          <span class="tap-to-edit">Toca para gestionar <i class="fas fa-chevron-right"></i></span>
+        </div>
+      </div>
+
+      <!-- Mensaje si no hay tickets en este estado -->
+      <div *ngIf="getSeguimientosPorColumna(estadoFiltroMovil).length === 0" class="empty-msg-mobile">
+        No hay tickets en esta sección.
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Ficha del Ticket -->
+  <div class="admin-modal-overlay" *ngIf="seguimientoSeleccionado" (click)="cerrarModal()">
+    <div class="admin-modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header-admin">
+        <div class="header-titles">
+          <label>FICHA TÉCNICA DEL TICKET</label>
+          <h2>{{ esNuevoSeguimiento ? 'Apertura de Ticket' : 'Seguimiento de Ticket' }}</h2>
+        </div>
+        <button class="close-modal-x" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form class="admin-form-grid" (ngSubmit)="guardarSeguimiento()">
+        <div class="form-field">
+          <label>Cliente / Solicitante</label>
+          <select [(ngModel)]="seguimientoSeleccionado.clienteId" name="clienteId" required>
+            <option value="">Seleccione solicitante...</option>
+            <option *ngFor="let c of clientes" [value]="c.id">{{ c.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Inmueble Vinculado (IPD)</label>
+          <select [(ngModel)]="seguimientoSeleccionado.propiedadCodigoIPD" name="propiedadCodigoIPD" required>
+            <option value="">Seleccione inmueble...</option>
+            <option *ngFor="let cod of codigosIPD" [value]="cod">{{ cod }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Categoría de Ticket</label>
+          <select [(ngModel)]="seguimientoSeleccionado.tipo" name="tipo">
+            <option value="venta">Ticket de Venta</option>
+            <option value="renta">Ticket de Renta</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Estado del Ticket</label>
+          <select [(ngModel)]="seguimientoSeleccionado.estado" name="estado">
+            <option value="contactado">Abierto (Recibido)</option>
+            <option value="visita agendada">En Visita / Agendado</option>
+            <option value="en negociación">En Negociación</option>
+            <option value="cerrado">Cerrado / Finalizado</option>
+          </select>
+        </div>
+
+        <div class="form-field full-width">
+          <label>Bitácora de Seguimiento</label>
+          <textarea rows="4" [(ngModel)]="seguimientoSeleccionado.observaciones" name="observaciones" placeholder="Registrar novedades, llamadas o acuerdos..."></textarea>
+        </div>
+        
+        <div class="form-actions-admin">
+            <button type="submit" class="btn-save-primary">{{ esNuevoSeguimiento ? 'ABRIR TICKET' : 'ACTUALIZAR TICKET' }}</button>
+            <button type="button" class="btn-delete-admin" *ngIf="!esNuevoSeguimiento" (click)="eliminarSeguimiento(seguimientoSeleccionado.id)">ANULAR TICKET</button>
+        </div>
+      </form>
+
+      <!-- Historial de Bitácora -->
+      <div class="client-history-admin" *ngIf="!esNuevoSeguimiento && historialCliente.length > 0">
+        <h3>Historial de Bitácora</h3>
+        <div class="history-timeline">
+          <div *ngFor="let hist of historialCliente" class="timeline-item">
+            <div class="time-marker">{{ hist.fecha | date:'dd/MM' }}</div>
+            <div class="time-content">
+              <span class="time-status" [ngClass]="hist.estado.replace(' ', '-')">{{ hist.estado | uppercase }}</span>
+              <p><strong>Ref: {{ hist.propiedadCodigoIPD }}</strong>: {{ hist.observaciones }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,308 @@
+<div class="property-card" *ngIf="property">
+  <!-- Botón de Cerrar (X) -->
+  <button class="close-card-btn" (click)="cancelar()" title="Cancelar y salir">×</button>
+
+  <div class="card-header">
+    <h2 class="card-title">{{ propertyId ? 'Editar' : 'Nueva' }} Propiedad</h2>
+    
+    <!-- Indicador de pasos con CHECKS -->
+    <div class="stepper-indicator">
+      <div class="step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
+        <div class="step-circle">
+          <span *ngIf="pasoActual <= 1">1</span>
+          <i *ngIf="pasoActual > 1" class="fas fa-check"></i>
+        </div>
+        <span>General</span>
+      </div>
+      <div class="step-line" [class.filled]="pasoActual > 1"></div>
+      
+      <div class="step" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2">
+        <div class="step-circle">
+          <span *ngIf="pasoActual <= 2">2</span>
+          <i *ngIf="pasoActual > 2" class="fas fa-check"></i>
+        </div>
+        <span>Detalles</span>
+      </div>
+      <div class="step-line" [class.filled]="pasoActual > 2"></div>
+      
+      <div class="step" [class.active]="pasoActual === 3">
+        <div class="step-circle">3</div>
+        <span>Imágenes</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="property-form-grid" (ngSubmit)="guardarCambios()" [class.form-saving]="isSaving">
+
+    <!-- PASO 1: INFORMACIÓN GENERAL -->
+    <ng-container *ngIf="pasoActual === 1">
+      <fieldset class="group full-width">
+        <legend><i class="fas fa-info-circle"></i> Información General</legend>
+        <div class="form-row-three">
+          <div class="property-form-group">
+            <label>Tipo de Propiedad <span class="required">*</span></label>
+            <select [(ngModel)]="property.TipoPropiedad" name="TipoPropiedad" [class.invalid]="mostrarErrorValidacion && !property.TipoPropiedad">
+              <option value="">Seleccione tipo... (Obligatorio)</option>
+              <option *ngFor="let t of tiposPropiedad" [value]="t">{{t}}</option>
+            </select>
+          </div>
+
+          <div class="property-form-group">
+            <label>Código (IPD) <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="property.IPD" name="IPD" [readonly]="true" class="readonly-input" />
+          </div>
+
+          <div class="property-form-group">
+            <label>Estado <span class="required">*</span></label>
+            <select [(ngModel)]="property.Estado" name="Estado" [class.invalid]="mostrarErrorValidacion && !property.Estado">
+              <option value="">Seleccione estado... (Obligatorio)</option>
+              <option *ngFor="let e of estadosPropiedad" [value]="e">{{e}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-two mt-12">
+          <div class="property-form-group">
+            <label>Código Interno (COD)</label>
+            <input type="text" [(ngModel)]="property.COD" name="COD" placeholder="Código interno (Opcional)" />
+          </div>
+          <div class="property-form-group">
+            <label>Código Propietario (PROCOD)</label>
+            <input type="text" [(ngModel)]="property.PROCOD" name="PROCOD" placeholder="Código del dueño (Opcional)" />
+          </div>
+        </div>
+
+        <div class="form-row-two mt-12">
+          <div class="property-form-group">
+            <label>
+              Encargado Responsable 
+              <span [class.required]="!property.Propietario" [class.optional]="property.Propietario">
+                {{ property.Propietario ? '(Opcional)' : '(Obligatorio)' }}
+              </span>
+            </label>
+            <div class="contact-select-wrapper">
+              <select [(ngModel)]="property.Encargado" name="Encargado" [class.invalid]="mostrarErrorValidacion && !property.Propietario && !property.Encargado">
+                <option value="">Seleccionar un responsable</option>
+                <option *ngFor="let contact of filtrarContactosPorRol('responsable')" [value]="contact.codigo">
+                  {{contact.nombres}} {{contact.apellidos}}
+                </option>
+              </select>
+              <button type="button" class="btn-add-contact" (click)="abrirModalContacto('responsable')" title="Añadir nuevo responsable">+</button>
+            </div>
+          </div>
+
+          <div class="property-form-group">
+            <label>
+              Propietario / Dueño 
+              <span [class.required]="!property.Encargado" [class.optional]="property.Encargado">
+                {{ property.Encargado ? '(Opcional)' : '(Obligatorio)' }}
+              </span>
+            </label>
+            <div class="contact-select-wrapper">
+              <select [(ngModel)]="property.Propietario" name="Propietario" [class.invalid]="mostrarErrorValidacion && !property.Propietario && !property.Encargado">
+                <option value="">Seleccionar un propietario</option>
+                <option *ngFor="let contact of filtrarContactosPorRol('propietario')" [value]="contact.codigo">
+                  {{contact.nombres}} {{contact.apellidos}}
+                </option>
+              </select>
+              <button type="button" class="btn-add-contact" (click)="abrirModalContacto('propietario')" title="Añadir nuevo dueño">+</button>
+            </div>
+          </div>
+        </div>
+        <p class="contact-helper-text">
+          <i class="fas fa-info-circle"></i> Debe vincular al menos un <strong>Propietario</strong> o un <strong>Encargado</strong> para continuar.
+        </p>
+      </fieldset>
+    </ng-container>
+
+    <!-- PASO 2: UBICACIÓN Y DETALLES -->
+    <ng-container *ngIf="pasoActual === 2">
+      <fieldset class="group full-width">
+        <legend><i class="fas fa-map-marked-alt"></i> Ubicación y Precio</legend>
+        <div class="form-row-two">
+          <div class="property-form-group">
+            <label>Dirección / Sector <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="property.Direccion_Sector" name="Direccion_Sector" placeholder="Ej: Ricaurte, Calle Real (Obligatorio)" [class.invalid]="mostrarErrorValidacion && !property.Direccion_Sector" />
+          </div>
+          <div class="property-form-group">
+            <label>Precio de Venta ($) <span class="required">*</span></label>
+            <input type="number" [(ngModel)]="property.Precio_Venta" name="Precio_Venta" min="0" placeholder="0.00 (Obligatorio)" [class.invalid]="mostrarErrorValidacion && !property.Precio_Venta" />
+          </div>
+        </div>
+        <div class="form-row-two mt-12">
+          <div class="property-form-group">
+            <label>Ciudad <span class="required">*</span></label>
+            <div class="contact-select-wrapper">
+              <select [(ngModel)]="property.CIUDAD" name="CIUDAD" [class.invalid]="mostrarErrorValidacion && !property.CIUDAD">
+                <option value="">Seleccione ciudad... (Obligatorio)</option>
+                <option *ngFor="let c of ciudades" [value]="c">{{c}}</option>
+              </select>
+              <button type="button" class="btn-add-contact" (click)="agregarCiudad()" title="Añadir nueva ciudad">+</button>
+            </div>
+          </div>
+          <div class="property-form-group">
+            <label>Edificio / Urbanización</label>
+            <input type="text" [(ngModel)]="property.Edif_Urb" name="Edif_Urb" placeholder="Nombre de edificio (Opcional)" />
+          </div>
+        </div>
+        <div class="property-form-group mt-12">
+          <label><i class="fas fa-map-marker-alt" style="color: #4285F4;"></i> Ubicación Google Maps (Link)</label>
+          <input type="text" [(ngModel)]="property.LinkMapa" name="LinkMapa" placeholder="Pegue aquí el link de Google Maps de la ubicación" />
+        </div>
+      </fieldset>
+
+      <fieldset class="group full-width">
+        <legend><i class="fas fa-ruler-combined"></i> Medidas y Áreas</legend>
+        <div class="details-grid">
+          <div class="property-form-group">
+            <label>Área terreno (m²) <span class="required">*</span></label>
+            <input type="number" [(ngModel)]="property.AreaTerreno" name="AreaTerreno" min="0" placeholder="0 (Obligatorio)" [class.invalid]="mostrarErrorValidacion && !property.AreaTerreno" />
+          </div>
+
+          <ng-container *ngIf="property.TipoPropiedad !== 'Terreno'">
+            <div class="property-form-group">
+              <label>Área const. (m²) <span class="required">*</span></label>
+              <input type="number" [(ngModel)]="property.AreaCons" name="AreaCons" min="0" placeholder="0 (Obligatorio)" [class.invalid]="mostrarErrorValidacion && !property.AreaCons" />
+            </div>
+            <div class="property-form-group">
+              <label>Habitaciones</label>
+              <input type="number" [(ngModel)]="property.HAB" name="HAB" min="0" placeholder="0 (Opcional)" />
+            </div>
+            <div class="property-form-group">
+              <label>Baños</label>
+              <input type="number" [(ngModel)]="property.BNO" name="BNO" min="0" placeholder="0 (Opcional)" />
+            </div>
+            <div class="property-form-group">
+              <label>Garage</label>
+              <input type="text" [(ngModel)]="property.GRJ" name="GRJ" placeholder="1, 2, No (Opcional)" />
+            </div>
+            <div class="property-form-group">
+              <label>Piso</label>
+              <input type="text" [(ngModel)]="property.Piso" name="Piso" placeholder="1, 2, 3... (Opcional)" />
+            </div>
+
+            <div class="property-form-group">
+              <label>Amoblado</label>
+              <select [(ngModel)]="property.Amoblado" name="Amoblado">
+                <option value="No">No</option>
+                <option value="Si">Si</option>
+                <option value="Semi">Semi-amoblado</option>
+              </select>
+            </div>
+            
+            <div class="property-form-group">
+              <label>Lavandería (LVD)</label>
+              <select [(ngModel)]="property.LVD" name="LVD">
+                <option value="No">No</option>
+                <option value="Si">Si</option>
+              </select>
+            </div>
+
+            <div class="property-form-group">
+              <label>Ascensor (ASC)</label>
+              <select [(ngModel)]="property.ASC" name="ASC">
+                <option value="No">No</option>
+                <option value="Si">Si</option>
+              </select>
+            </div>
+
+            <div class="property-form-group">
+              <label>Bodega (BDG)</label>
+              <select [(ngModel)]="property.BDG" name="BDG">
+                <option value="No">No</option>
+                <option value="Si">Si</option>
+              </select>
+            </div>
+          </ng-container>
+        </div>
+      </fieldset>
+    </ng-container>
+
+    <!-- PASO 3: IMÁGENES Y EXTRAS -->
+    <ng-container *ngIf="pasoActual === 3">
+      <fieldset class="group full-width">
+        <legend><i class="fas fa-images"></i> Multimedia y Observaciones</legend>
+        <div class="property-form-group">
+          <label>Extras / Detalles relevantes</label>
+          <textarea rows="3" [(ngModel)]="property.Extras" name="Extras" placeholder="Describa acabados, servicios básicos, etc. (Opcional)"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="group full-width">
+        <legend>Gestión de Galería</legend>
+        
+        <div *ngIf="imagenesExistentes.length > 0" class="imagenes-existentes-section">
+          <h5 class="section-title">Imágenes guardadas (Arrastra para reordenar)</h5>
+          <div class="imagenes-existentes-grid">
+            <div *ngFor="let img of imagenesExistentes; let i = index" class="thumb-existente" draggable="true" (dragstart)="onDragStart(i, 'existente')" (dragover)="onDragOver($event)" (drop)="onDrop(i, 'existente')">
+              <img [src]="img" />
+              <div class="preview-order">{{i + 1}}</div>
+              <button type="button" class="btn-remove" (click)="eliminarImagenExistente(i)">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="imagenesPreview.length > 0" class="imagenes-preview-section">
+          <h5 class="preview-title">Nuevas por subir</h5>
+          <div class="imagenes-preview-grid">
+            <div *ngFor="let img of imagenesPreview; let i = index" class="preview-thumb" draggable="true" (dragstart)="onDragStart(i, 'nueva')" (dragover)="onDragOver($event)" (drop)="onDrop(i, 'nueva')">
+              <img [src]="img.preview" />
+              <div class="preview-order">{{i + 1}}</div>
+              <button type="button" class="btn-remove-preview" (click)="eliminarImagenPreview(i)">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-zone mt-12">
+          <label class="file-label"><i class="fas fa-cloud-upload-alt"></i> Subir nuevas fotos (Opcional)</label>
+          <input class="file-input" type="file" (change)="onImagenesSeleccionadas($event)" multiple accept="image/*" />
+        </div>
+      </fieldset>
+    </ng-container>
+
+    <!-- Mensaje de Error Heurístico -->
+    <p class="validation-error-msg" *ngIf="mostrarErrorValidacion">
+      <i class="fas fa-exclamation-triangle"></i> Por favor, llene los campos obligatorios marcados con (*)
+    </p>
+
+    <!-- NAVEGACIÓN Y ACCIONES -->
+    <div class="action-buttons full-width">
+      <button type="button" class="btn-sec" *ngIf="pasoActual > 1" (click)="anteriorPaso()">
+        <i class="fas fa-chevron-left"></i> Anterior
+      </button>
+      
+      <button type="button" class="btn-main" *ngIf="pasoActual < totalPasos" (click)="siguientePaso()">
+        Siguiente <i class="fas fa-chevron-right"></i>
+      </button>
+      
+      <button type="submit" class="btn-main save-btn" *ngIf="pasoActual === totalPasos" [disabled]="isSaving">
+        <i class="fas fa-save"></i> Guardar Propiedad
+      </button>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div *ngIf="isSaving" class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="saveProgress"></div>
+      </div>
+      <p class="progress-message">{{ saveProgressMessage }}</p>
+    </div>
+
+  </form>
+
+  <!-- Modal Nuevo Contacto -->
+  <div class="contact-modal-overlay" *ngIf="showContactForm">
+    <div class="contact-panel-modal">
+      <h3>Nuevo Registro de {{ rolParaNuevoContacto === 'propietario' ? 'Dueño' : 'Responsable' }}</h3>
+      <div class="contact-form">
+        <input [(ngModel)]="nuevoContacto.nombres" placeholder="Nombres (Obligatorio)" />
+        <input [(ngModel)]="nuevoContacto.apellidos" placeholder="Apellidos (Obligatorio)" />
+        <input [(ngModel)]="nuevoContacto.telefono" placeholder="Teléfono (Obligatorio)" />
+        <div class="contact-form-actions">
+          <button type="button" class="btn-main" (click)="guardarNuevoContacto()">CREAR</button>
+          <button type="button" class="btn-sec" (click)="cancelarNuevoContacto()">CERRAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

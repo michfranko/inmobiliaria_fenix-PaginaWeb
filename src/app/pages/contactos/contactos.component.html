@@ -1,0 +1,184 @@
+<div class="contactos-page-admin" [class.sidebar-open]="contactoSeleccionado">
+  
+  <div class="main-content-wrapper">
+    <!-- Encabezado CRM -->
+    <header class="admin-header">
+      <div class="header-top">
+        <h1>Directorio de <span class="highlight">Contactos</span></h1>
+        <div class="header-stats">
+          <span class="stat-pill">{{ contactosFiltrados.length }} Personas registradas</span>
+        </div>
+      </div>
+      
+      <div class="admin-toolbar">
+        <div class="search-wrapper-admin">
+          <i class="fas fa-search"></i>
+          <input type="text" [(ngModel)]="searchTerm" (input)="aplicarFiltros()" 
+                 placeholder="Buscar por nombre, apellido o teléfono..." />
+        </div>
+
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="filtroRol" (change)="aplicarFiltros()">
+            <option value="">Todos los Roles</option>
+            <option *ngFor="let rol of rolesDisponibles" [value]="rol">{{ rol | uppercase }}</option>
+          </select>
+        </div>
+        
+        <div class="action-buttons-admin">
+          <button class="btn-main" (click)="abrirFormularioNuevo()">
+            <i class="fas fa-user-plus"></i> NUEVO CONTACTO
+          </button>
+          <button class="btn-sec" (click)="descargarReportePDF()">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabla de Personas (CRM) - VISTA PC -->
+    <div class="table-container-admin desktop-only">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>PERSONA / CONTACTO</th>
+            <th>CÓDIGO</th>
+            <th>ROL</th>
+            <th class="hide-mobile">TELÉFONO</th>
+            <th class="text-center">PORTAFOLIO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of contactosFiltrados" 
+              class="admin-row" 
+              [class.selected]="c.id === contactoSeleccionado?.id"
+              (click)="seleccionarContacto(c)">
+            <td class="col-name">
+              <div class="user-cell">
+                <div class="user-avatar">{{ c.nombres[0] }}{{ (c.apellidos && c.apellidos[0]) || '' }}</div>
+                <div class="user-info">
+                  <strong>{{ c.nombres }} {{ c.apellidos }}</strong>
+                </div>
+              </div>
+            </td>
+            <td class="col-code">
+              <span class="ipd-badge">{{ c.codigo }}</span>
+            </td>
+            <td class="col-role">
+              <span class="role-badge" [ngClass]="c.rol">{{ c.rol }}</span>
+            </td>
+            <td class="col-phone hide-mobile">
+              <i class="fas fa-phone-alt"></i> {{ c.telefono || '---' }}
+            </td>
+            <td class="col-count text-center">
+              <span class="prop-count" [class.has-props]="contarPropiedades(c.codigo) > 0">
+                {{ contarPropiedades(c.codigo) }} Inmuebles
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISTA MÓVIL: Tarjetas de Contacto -->
+    <div class="mobile-only admin-mobile-list">
+      <div *ngFor="let c of contactosFiltrados" 
+           class="mobile-contact-card" 
+           (click)="seleccionarContacto(c)">
+        <div class="card-header">
+          <div class="user-avatar-small">{{ c.nombres[0] }}{{ (c.apellidos && c.apellidos[0]) || '' }}</div>
+          <span class="role-badge-mini" [ngClass]="c.rol">{{ c.rol }}</span>
+        </div>
+        
+        <div class="card-body-contact">
+          <h3>{{ c.nombres }} {{ c.apellidos }}</h3>
+          <p class="contact-phone"><i class="fas fa-phone-alt"></i> {{ c.telefono || '---' }}</p>
+          <div class="contact-footer-info">
+            <span class="ipd-badge-mini">CÓD: {{ c.codigo }}</span>
+            <span class="prop-count-mini">{{ contarPropiedades(c.codigo) }} Propiedades</span>
+          </div>
+        </div>
+
+        <div class="card-tap-indicator">
+          <span>Ver perfil <i class="fas fa-chevron-right"></i></span>
+        </div>
+      </div>
+
+      <!-- Mensaje si no hay resultados -->
+      <div *ngIf="contactosFiltrados.length === 0" class="empty-msg-mobile">
+        No se encontraron contactos.
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA LATERAL DE PERFIL (CRM SIDEBAR) -->
+  <aside class="sidebar-admin" *ngIf="contactoSeleccionado">
+    <div class="sidebar-header profile-mode">
+      <div class="profile-header-info">
+        <div class="large-avatar">{{ (contactoSeleccionado.nombres[0] || '?') }}{{ (contactoSeleccionado.apellidos && contactoSeleccionado.apellidos[0]) || '' }}</div>
+        <h3>{{ contactoSeleccionado.id ? contactoSeleccionado.nombres : 'Nuevo Registro' }}</h3>
+        <p class="sidebar-role-tag">{{ contactoSeleccionado.id ? contactoSeleccionado.rol : 'Aspirante / Prospecto' | uppercase }}</p>
+      </div>
+      <button class="close-sidebar" (click)="cerrarSidebar()">&times;</button>
+    </div>
+
+    <div class="sidebar-content">
+      
+      <!-- Edición / Creación de Perfil -->
+      <div class="state-container">
+        <form class="sidebar-form" (ngSubmit)="guardarCambiosContacto()">
+          <div class="form-group">
+            <label>Nombres</label>
+            <input type="text" [(ngModel)]="contactoSeleccionado.nombres" name="nombres" required />
+          </div>
+          <div class="form-group">
+            <label>Apellidos</label>
+            <input type="text" [(ngModel)]="contactoSeleccionado.apellidos" name="apellidos" required />
+          </div>
+          <div class="form-group">
+            <label>Teléfono de Contacto</label>
+            <input type="tel" [(ngModel)]="contactoSeleccionado.telefono" name="telefono" required />
+          </div>
+
+          <!-- Rol Informativo (No editable manualmente para evitar desincronización) -->
+          <div class="form-group" *ngIf="contactoSeleccionado.id">
+            <label>Rol Actual (Auto)</label>
+            <div class="role-display-box">{{ contactoSeleccionado.rol | uppercase }}</div>
+          </div>
+          
+          <div class="form-actions-sidebar">
+            <button type="submit" class="btn-submit-sidebar">
+              {{ contactoSeleccionado.id ? 'ACTUALIZAR PERFIL' : 'REGISTRAR NUEVO' }}
+            </button>
+            <button *ngIf="contactoSeleccionado.id" type="button" class="btn-delete-permanent" (click)="eliminarContacto(contactoSeleccionado.id)">
+              <i class="fas fa-trash-alt"></i> ELIMINAR DE BASE DE DATOS
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PORTAFOLIO DEL CONTACTO (Solo si ya existe) -->
+      <div class="portfolio-section-crm" *ngIf="contactoSeleccionado.id">
+        <h4>Portafolio Vinculado ({{ propiedadesDelContacto.length }})</h4>
+        
+        <div class="portfolio-grid-crm" *ngIf="propiedadesDelContacto.length > 0; else noPortfolio">
+          <div *ngFor="let p of propiedadesDelContacto" class="portfolio-card-mini">
+            <span class="p-mini-code">{{ p.IPD }}</span>
+            <div class="p-mini-info">
+              <strong>{{ p.TipoPropiedad }}</strong>
+              <p>{{ p.Direccion_Sector }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noPortfolio>
+          <div class="empty-portfolio">
+            <i class="fas fa-home"></i>
+            <p>Sin inmuebles registrados.</p>
+          </div>
+        </ng-template>
+      </div>
+
+    </div>
+  </aside>
+
+</div>

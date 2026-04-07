@@ -1,0 +1,31 @@
+<header class="custom-toolbar"> 
+  <!-- Logo con dimensiones explícitas para evitar CLS -->
+  <img 
+    src='assets/imagenes/logoFenix5.png' 
+    alt="Inmobiliaria Fenix Logo" 
+    class="logo" 
+    width="240" 
+    height="120"
+    (click)="goToInicio()"
+    style="cursor: pointer;"> 
+
+  <!-- Botón Hamburguesa -->
+  <button class="menu-toggle lg:hidden" (click)="toggleMenu()" aria-label="Abrir menú de navegación">
+    <i class="fas" [ngClass]="menuAbierto ? 'fa-times' : 'fa-bars'" aria-hidden="true"></i>
+  </button>
+
+  <!-- Menú de Botones (adaptable) -->
+  <div class="botones" [class.menu-abierto]="menuAbierto">
+    <button class="btninicio" *ngIf="!isLoggedIn" routerLink="/home" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="menuAbierto = false">Inicio</button>
+    
+    <button class="btnacercade" *ngIf="!isLoggedIn" routerLink="/catalogo" routerLinkActive="active-link" (click)="menuAbierto = false">Propiedades</button>
+    
+    <button class="btnacercade" *ngIf="!isLoggedIn" routerLink="/acercade" routerLinkActive="active-link" (click)="menuAbierto = false">Acerca de</button>
+    
+    <button class="btnacercade" *ngIf="isLoggedIn" routerLink="/mantenimiento" routerLinkActive="active-link" (click)="menuAbierto = false">Mantenimiento</button>
+    <button class="btnacercade" *ngIf="isLoggedIn" routerLink="/seguimiento" routerLinkActive="active-link" (click)="menuAbierto = false">Seguimiento</button>
+    <button class="btnacercade" *ngIf="isLoggedIn" routerLink="/contactos" routerLinkActive="active-link" (click)="menuAbierto = false">Contacto</button>
+    
+    <button class="btninicio" *ngIf="isLoggedIn" (click)="cerrarSesion()">Cerrar sesión</button>
+  </div>
+</header>

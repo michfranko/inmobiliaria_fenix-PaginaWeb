@@ -1,0 +1,106 @@
+/* Estilos Globales - Inmobiliaria Fénix */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Aplicar Roboto a todo excepto a los iconos */
+body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, a, label {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+/* Asegurar que los iconos mantengan su fuente original (FontAwesome, etc.) */
+.fas, .fab, .far, .fal, .fad, .fa, [class^="fa-"], [class*=" fa-"] {
+    font-family: inherit !important; /* Permite que la clase del icono defina su propia fuente */
+}
+
+/* O mejor aún, una regla más específica para FontAwesome */
+i.fas, i.fab, i.far, i.fa {
+    font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands', 'Font Awesome 6 Free', 'Font Awesome 6 Brands' !important;
+    font-weight: 900;
+}
+
+html, body {
+    height: 100%;
+    background-color: #000000;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+body {
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografías consistentes para encabezados */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Estilo para botones globales (opcional, ayuda a la armonía) */
+/* Estilos para enlaces de contacto en el footer */
+.footer-link {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-link:hover {
+    color: #FFBE2D;
+}
+
+.footer-link i {
+    font-size: 1.1rem;
+}
+
+/* Botones Globales Admin */
+.btn-main, .btn-sec {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  font-family: 'Inter', 'Roboto', sans-serif !important;
+}
+
+.btn-main {
+  background: #FFBE2D;
+  color: #000;
+  box-shadow: 0 4px 12px rgba(255, 190, 45, 0.2);
+}
+
+.btn-main:hover {
+  background: #FFC94D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 190, 45, 0.3);
+}
+
+.btn-main:active {
+  transform: translateY(0);
+}
+
+.btn-sec {
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #2a2a2a;
+}
+
+.btn-sec:hover {
+  background: #222;
+  border-color: #FFBE2D;
+  color: #FFBE2D;
+  transform: translateY(-1px);
+}

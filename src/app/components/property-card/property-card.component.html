@@ -1,0 +1,75 @@
+<article class="property-card" role="article" [attr.aria-label]="property.TipoPropiedad + ' en ' + property.Direccion_Sector" (click)="onViewDetail()" style="cursor: pointer;">
+  <div class="property-card-image-container">
+    <div class="status-badge" [ngClass]="property.Estado.toLowerCase() === 'en renta' ? 'renta' : 'venta'">
+      {{ property.Estado }}
+    </div>
+    
+    <!-- Imagen Optimizada -->
+    <img 
+      [ngSrc]="(property.imagenes && property.imagenes.length > 0) ? property.imagenes[property._currentImageIndex || 0] : 'assets/no-image.svg'" 
+      alt="Vista de {{ property.TipoPropiedad }}" 
+      class="imagenProp"
+      fill
+      [priority]="priority"
+      fetchpriority="high"
+    />
+    
+    <ng-container *ngIf="property.imagenes && property.imagenes.length > 1">
+      <button class="carousel-btn prev" (click)="previousImage($event)" aria-label="Imagen anterior">
+        <span aria-hidden="true">&#10094;</span>
+      </button>
+      <button class="carousel-btn next" (click)="nextImage($event)" aria-label="Siguiente imagen">
+        <span aria-hidden="true">&#10095;</span>
+      </button>
+    </ng-container>
+  
+    <div class="image-counter-mini" *ngIf="property.imagenes && property.imagenes.length > 1" aria-hidden="true">
+      {{ (property._currentImageIndex || 0) + 1 }} / {{ property.imagenes.length }}
+    </div>
+  </div>
+
+  <div class="property-info-content">
+    <div class="main-info">
+      <div class="title-price-row">
+        <h3>{{ property.TipoPropiedad }}</h3>
+        <p class="price-tag">${{ property.Precio_Venta }}</p>
+      </div>
+      <p class="location-text">
+        <i class="fas fa-map-marker-alt" aria-hidden="true"></i> 
+        {{ property.CIUDAD ? property.CIUDAD + ' - ' : '' }}{{ property.Direccion_Sector || 'Sector no especificado' }}
+      </p>
+      <p class="code-text" *ngIf="property.IPD">
+        Código: {{ property.IPD }}
+        <span class="map-indicator" *ngIf="property.LinkMapa" title="Ubicación en el mapa disponible">
+          <i class="fas fa-map-marked-alt"></i>
+        </span>
+      </p>
+    </div>
+
+    <div class="specs-pills">
+      <div class="spec-pill" *ngIf="property.HAB">
+        <i class="fas fa-bed" aria-hidden="true"></i> <span>{{ property.HAB }} Hab.</span>
+      </div>
+      <div class="spec-pill" *ngIf="property.BNO">
+        <i class="fas fa-bath" aria-hidden="true"></i> <span>{{ property.BNO }} Baños</span>
+      </div>
+      <div class="spec-pill" *ngIf="property.AreaCons">
+        <i class="fas fa-expand" aria-hidden="true"></i> <span>{{ property.AreaCons }}m²</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="property-card-footer">
+    <button class="btn-more-minimal" (click)="onViewDetail()" aria-label="Ver detalles completos de la propiedad">
+      VER DETALLES
+    </button>
+    <div class="footer-actions-group">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=fenix.ec.inmobiliaria@gmail.com" target="_blank" rel="noopener" class="action-icon-link" (click)="$event.stopPropagation()" aria-label="Enviar correo electrónico de consulta">
+        <i class="fas fa-envelope" aria-hidden="true"></i>
+      </a>
+      <a [href]="createWhatsappLink()" target="_blank" rel="noopener" class="action-icon-link ws" (click)="$event.stopPropagation()" aria-label="Consultar por WhatsApp">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,214 @@
+<div class="mantenimiento-page">
+  
+  <!-- Encabezado de Gestión Rápida -->
+  <header class="admin-header">
+    <div class="header-top">
+      <h1>Panel de <span class="highlight">Control</span></h1>
+      <div class="header-stats" *ngIf="filteredProperties.length > 0">
+        <span class="stat-pill">{{ filteredProperties.length }} Propiedades en lista</span>
+      </div>
+    </div>
+    
+    <div class="admin-toolbar">
+      <!-- Filtros combinados -->
+      <div class="filters-grid">
+        <div class="search-wrapper-admin">
+          <i class="fas fa-barcode"></i>
+          <input type="text" [(ngModel)]="codigo" (input)="filterProperties()" placeholder="Cód IPD..." />
+        </div>
+
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="filtroCiudad" (change)="filterProperties()">
+            <option value="">Todas las Ciudades</option>
+            <option *ngFor="let c of ciudades" [value]="c">{{c}}</option>
+          </select>
+        </div>
+
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="filtroTipo" (change)="filterProperties()">
+            <option value="">Todos los Tipos</option>
+            <option *ngFor="let t of tiposPropiedad" [value]="t">{{t}}</option>
+          </select>
+        </div>
+
+        <div class="filter-select-wrapper">
+          <select [(ngModel)]="filtroEstado" (change)="filterProperties()">
+            <option value="">Todos los Estados</option>
+            <option *ngFor="let e of estadosPropiedad" [value]="e">{{e}}</option>
+          </select>
+        </div>
+
+        <button class="btn-clear" (click)="limpiarFiltros()" title="Limpiar todos los filtros">
+          <i class="fas fa-undo"></i>
+        </button>
+      </div>
+      
+      <div class="action-buttons-admin">
+        <button class="btn-main add" (click)="agregarNuevaPropiedad()">
+          <i class="fas fa-plus"></i> NUEVA
+        </button>
+        <button class="btn-sec btn-pdf" (click)="exportarListado('venta')" title="Exportar Ventas PDF">
+          <i class="fas fa-file-pdf"></i> PDF VENTAS
+        </button>
+        <button class="btn-sec btn-pdf" (click)="exportarListado('arriendo')" title="Exportar Rentas PDF">
+          <i class="fas fa-file-pdf"></i> PDF RENTAS
+        </button>
+        <!-- Nuevos botones de Excel -->
+        <button class="btn-sec btn-excel" (click)="exportarExcel('venta')" title="Exportar Ventas Excel">
+          <i class="fas fa-file-excel"></i> EXCEL VENTAS
+        </button>
+        <button class="btn-sec btn-excel" (click)="exportarExcel('arriendo')" title="Exportar Rentas Excel">
+          <i class="fas fa-file-excel"></i> EXCEL RENTAS
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabla de Datos Optimizada (VISTA PC) -->
+  <div class="table-container-admin desktop-only">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>IMAGEN</th>
+          <th>CÓDIGO</th>
+          <th>TIPO / ESTADO</th>
+          <th>PRECIO</th>
+          <th>UBICACIÓN / SECTOR</th>
+          <th>CONTACTOS (PROP/ENC)</th>
+          <th class="text-center">ESTADO RÁPIDO</th>
+          <th class="text-center">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="filteredProperties.length > 0; else noData">
+        <tr *ngFor="let property of filteredProperties" class="admin-row">
+          <td class="col-img">
+            <img [src]="(property.imagenes && property.imagenes.length > 0) ? property.imagenes[0] : 'assets/no-image.svg'" alt="">
+          </td>
+          <td class="col-code">
+            <span class="ipd-badge">{{ property.IPD }}</span>
+          </td>
+          <td class="col-type">
+            <div class="type-cell">
+              <strong>{{ property.TipoPropiedad }}</strong>
+              <span class="status-indicator" [ngClass]="property.Estado.toLowerCase() === 'en renta' ? 'renta' : 'venta'">
+                {{ property.Estado }}
+              </span>
+            </div>
+          </td>
+          <td class="col-price">
+            <span class="price-val">${{ property.Precio_Venta }}</span>
+          </td>
+          <td class="col-loc">
+            <div class="loc-cell" [title]="property.Direccion_Sector">
+              {{ property.Direccion_Sector }}
+            </div>
+          </td>
+          <td class="col-contacts">
+            <div class="contact-mini">
+              <span><i class="fas fa-user-tie"></i> {{ contactMap.get(property.Propietario)?.nombreCompleto || '---' }}</span>
+              <span><i class="fas fa-user-check"></i> {{ contactMap.get(property.Encargado)?.nombreCompleto || '---' }}</span>
+            </div>
+          </td>
+          <td class="col-quick-status">
+            <div class="quick-status-group">
+              <!-- Botones para marcar como cerrado -->
+              <ng-container *ngIf="property.Estado.toLowerCase() !== 'vendido' && property.Estado.toLowerCase() !== 'rentado'">
+                <button class="btn-status-quick sell" (click)="cambiarEstadoRapido(property, 'Vendido')">
+                  VENDIDO
+                </button>
+                <button class="btn-status-quick rent" (click)="cambiarEstadoRapido(property, 'Rentado')">
+                  RENTADO
+                </button>
+              </ng-container>
+
+              <!-- Botón para regresar al estado anterior (Reactivar) -->
+              <button *ngIf="property.Estado.toLowerCase() === 'vendido' || property.Estado.toLowerCase() === 'rentado'" 
+                      class="btn-status-quick reactivate" 
+                      (click)="cambiarEstadoRapido(property, 'Disponible')">
+                <i class="fas fa-undo"></i> REGRESAR A DISPONIBLE
+              </button>
+            </div>
+          </td>
+          <td class="col-actions">
+            <div class="actions-group-admin">
+              <button class="action-btn edit" (click)="modificarPropiedad(property.id!)" title="Editar"><i class="fas fa-edit"></i></button>
+              <button class="action-btn pdf" (click)="imprimirPDF(property)" title="PDF"><i class="fas fa-file-pdf"></i></button>
+              <button class="action-btn delete" (click)="prepararEliminacion(property.id!)" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VISTA MÓVIL: Lista de Tarjetas Táctiles -->
+  <div class="mobile-only admin-mobile-list">
+    <div *ngFor="let property of filteredProperties" class="mobile-property-card">
+      <div class="card-header">
+        <span class="ipd-badge">{{ property.IPD }}</span>
+        <span class="status-indicator" [ngClass]="property.Estado.toLowerCase() === 'en renta' ? 'renta' : 'venta'">
+          {{ property.Estado }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <img [src]="(property.imagenes && property.imagenes.length > 0) ? property.imagenes[0] : 'assets/no-image.svg'" alt="">
+        <div class="card-info">
+          <h3>{{ property.TipoPropiedad }}</h3>
+          <p class="price">${{ property.Precio_Venta }}</p>
+          <p class="location"><i class="fas fa-map-marker-alt"></i> {{ property.Direccion_Sector }}</p>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button *ngIf="property.Estado.toLowerCase() !== 'vendido' && property.Estado.toLowerCase() !== 'rentado'" 
+                class="m-btn status-sell" 
+                (click)="cambiarEstadoRapido(property, 'Vendido')">
+          <i class="fas fa-handshake"></i> VENDIDO
+        </button>
+        <button *ngIf="property.Estado.toLowerCase() !== 'rentado' && property.Estado.toLowerCase() !== 'vendido'" 
+                class="m-btn status-rent" 
+                (click)="cambiarEstadoRapido(property, 'Rentado')">
+          <i class="fas fa-key"></i> RENTADO
+        </button>
+        <button *ngIf="property.Estado.toLowerCase() === 'vendido' || property.Estado.toLowerCase() === 'rentado'" 
+                class="m-btn status-reactivate" 
+                (click)="cambiarEstadoRapido(property, 'Disponible')">
+          <i class="fas fa-undo"></i> REACTIVAR
+        </button>
+
+        <button class="m-btn edit" (click)="modificarPropiedad(property.id!)"><i class="fas fa-edit"></i> EDITAR</button>
+        <button class="m-btn pdf" (click)="imprimirPDF(property)"><i class="fas fa-file-pdf"></i> PDF</button>
+        <button class="m-btn delete" (click)="prepararEliminacion(property.id!)"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay resultados en móvil -->
+    <div *ngIf="filteredProperties.length === 0" class="empty-msg-mobile">
+      No se encontraron propiedades.
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal de Confirmación Directo -->
+<div *ngIf="mostrarConfirmacion" class="admin-modal-overlay">
+  <div class="admin-modal-card">
+    <i class="fas fa-exclamation-circle warn-icon"></i>
+    <h3>¿Confirmar eliminación?</h3>
+    <div class="modal-btns">
+      <button class="m-btn-cancel" (click)="cancelarEliminacion()">CANCELAR</button>
+      <button class="m-btn-confirm" (click)="confirmarEliminacion()">ELIMINAR</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noData>
+  <tr>
+    <td colspan="7" class="empty-msg-admin">
+      No se encontraron propiedades. <button (click)="codigo=''; filterProperties()">Limpiar filtro</button>
+    </td>
+  </tr>
+</ng-template>
+
+<router-outlet></router-outlet>

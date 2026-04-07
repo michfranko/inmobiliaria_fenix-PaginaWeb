@@ -1,0 +1,32 @@
+<footer class="main-footer">
+  <!-- Sección de invitación (Solo para Home) -->
+  <div class="footer-cta" *ngIf="compuesto">
+    <h2>¿Hablamos de su futuro?</h2>
+    <p>Estamos listos para asesorarle en su próxima gran decisión inmobiliaria.</p>
+    <a href="https://wa.me/593998683511" target="_blank" rel="noopener" class="btn-cta-whatsapp">
+      Contactar por WhatsApp
+    </a>
+  </div>
+
+  <!-- Info de contacto simple (Para todas las páginas) -->
+  <div class="footer-contact-info" [style.border-top]="!compuesto ? 'none' : ''">
+    <img 
+      src="assets/imagenes/logoFenix5.png" 
+      alt="Inmobiliaria Fenix Logo" 
+      class="footer-logo" 
+      width="150" 
+      height="75"
+      style="object-fit: contain; margin-bottom: 20px;"
+      loading="lazy">
+    <p class="owner-name">Ing. Patricio Campozano</p>
+    <div class="links-group">
+      <a href="https://wa.me/593998683511" target="_blank" rel="noopener" class="footer-link">
+        Teléfono: +593 99 868 3511
+      </a>
+      <span class="divider">|</span>
+      <a href="mailto:fenix.ec.inmobiliaria@gmail.com" class="footer-link">
+        Correo: fenix.ec.inmobiliaria&#64;gmail.com
+      </a>
+    </div>
+  </div>
+</footer>

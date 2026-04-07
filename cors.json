@@ -1,0 +1,14 @@
+[
+  {
+    "origin": [
+      "http://localhost:4200", 
+      "https://finalinmobiliaria.web.app", 
+      "https://inmobiliariafenix.com",
+      "https://*.github.io"
+    ],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization", "x-goog-meta-tag"]
+  }
+]
+  

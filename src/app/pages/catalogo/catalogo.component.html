@@ -1,0 +1,183 @@
+<div class="catalogo-container">
+
+  <!-- ========================================== -->
+  <!-- VISTA ESCRITORIO (PC)                      -->
+  <!-- ========================================== -->
+  <div class="desktop-view" *ngIf="!isMobile">
+    
+    <!-- Navbar de dos filas para PC -->
+    <nav class="desktop-nav-container">
+      <div class="main-nav-row">
+        <button *ngFor="let group of categoryGroups" (click)="selectMainCategory(group.name)" [class.active]="activeMainCategory === group.name">
+          {{ group.name }}
+        </button>
+      </div>
+      <div class="sub-nav-row" *ngIf="activeMainCategory && subCategories.length > 0">
+        <button *ngFor="let type of subCategories" (click)="selectSubCategory(type)" [class.active]="activeSubCategory === type">
+          {{ type }}
+        </button>
+      </div>
+    </nav>
+
+    <main class="main-content-pc">
+      <!-- Panel de Control Superior -->
+      <div class="top-controls-glass">
+        <div class="filter-header-row">
+          <div class="results-info">
+            <i class="fas fa-home"></i>
+            <span>{{ filteredProperties.length }}</span> Propiedades disponibles
+          </div>
+          <div class="action-tools">
+            <button class="btn-tool-outline" (click)="toggleAdvanced()" [class.active]="showAdvanced">
+              <i class="fas fa-sliders-h"></i> FILTROS AVANZADOS
+            </button>
+            <button class="btn-tool-outline reset" (click)="clearFilters()">
+              <i class="fas fa-sync-alt"></i> LIMPIAR
+            </button>
+          </div>
+        </div>
+
+        <div class="main-filters-grid">
+          <div class="filter-item">
+            <label>Ciudad</label>
+            <div class="select-wrapper">
+              <select [(ngModel)]="city" (change)="filterProperties()">
+                <option value="">Todas las ciudades</option>
+                <option *ngFor="let c of cities" [value]="c">{{ c }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-item">
+            <label>Estado</label>
+            <div class="select-wrapper">
+              <select [(ngModel)]="estado" (change)="filterProperties()">
+                <option value="">Todos los disponibles</option>
+                <option value="Disponible">Disponible</option>
+                <option value="Reservado">Reservado</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-item">
+            <label>Código IPD</label>
+            <div class="input-wrapper">
+              <input type="text" [(ngModel)]="codigo" (input)="filterProperties()" placeholder="Ej: AV123" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros Avanzados PC -->
+      <div class="advanced-dropdown" *ngIf="showAdvanced">
+        <div class="advanced-inner-grid">
+          <div class="adv-field">
+            <label>Presupuesto Máximo</label>
+            <div class="input-with-icon">
+              <span class="currency">$</span>
+              <input type="number" [(ngModel)]="maxPrice" (input)="filterProperties()" placeholder="Monto máx." />
+            </div>
+          </div>
+          <div class="adv-field">
+            <label>Dormitorios</label>
+            <input type="number" [(ngModel)]="minRooms" (input)="filterProperties()" placeholder="Mínimo" />
+          </div>
+          <div class="adv-field">
+            <label>Superficie (m²)</label>
+            <input type="number" [(ngModel)]="minArea" (input)="filterProperties()" placeholder="Área mín." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Grilla de Resultados PC -->
+      <div class="properties-grid" *ngIf="filteredProperties.length > 0; else noResults">
+        <app-property-card 
+          *ngFor="let property of filteredProperties.slice(0, itemsToShow); let i = index"
+          [property]="property"
+          [priority]="i < 2"
+          (viewDetail)="openPropertyDetail($event)">
+        </app-property-card>
+      </div>
+
+      <!-- Botón Ver Más PC -->
+      <div class="load-more-container" *ngIf="filteredProperties.length > itemsToShow">
+        <button class="btn-load-more" (click)="loadMore()">MOSTRAR MÁS PROPIEDADES <i class="fas fa-plus"></i></button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISTA MÓVIL                                -->
+  <!-- ========================================== -->
+  <div class="mobile-view" *ngIf="isMobile">
+    <div class="header-spacer"></div>
+
+    <!-- Nueva Sección de Categorías con Iconos -->
+    <div class="mobile-cat-grid">
+      <div class="cat-card" *ngFor="let group of categoryGroups" (click)="selectMainCategory(group.name)" [class.active]="activeMainCategory === group.name">
+        <i [class]="group.icon"></i>
+        <span>{{ group.name }}</span>
+      </div>
+    </div>
+
+    <!-- Subcategorías como Chips -->
+    <div class="mobile-subcat-chips" *ngIf="activeMainCategory && subCategories.length > 0">
+      <button class="chip" *ngFor="let type of subCategories" (click)="selectSubCategory(type)" [class.active]="activeSubCategory === type">
+        {{ type }}
+      </button>
+    </div>
+
+    <div class="mobile-search-row">
+      <div class="mobile-search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="codigo" (input)="filterProperties()" placeholder="Buscar por código IPD..." />
+      </div>
+      <button class="mobile-filter-btn" (click)="showAdvanced = !showAdvanced" [class.active]="showAdvanced"><i class="fas fa-filter"></i></button>
+    </div>
+
+    <!-- Filtros Avanzados Móvil -->
+    <div class="advanced-dropdown mobile-adv" *ngIf="showAdvanced">
+      <div class="advanced-inner-grid">
+        <div class="adv-field">
+          <label>Presupuesto Máximo</label>
+          <div class="input-with-icon">
+            <span class="currency">$</span>
+            <input type="number" [(ngModel)]="maxPrice" (input)="filterProperties()" placeholder="Monto máx." />
+          </div>
+        </div>
+        <div class="adv-field">
+          <label>Dormitorios</label>
+          <input type="number" [(ngModel)]="minRooms" (input)="filterProperties()" placeholder="Mínimo" />
+        </div>
+        <div class="adv-field">
+          <label>Superficie (m²)</label>
+          <input type="number" [(ngModel)]="minArea" (input)="filterProperties()" placeholder="Área mín." />
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados Móvil con Ver Más -->
+    <div class="mobile-results-container" *ngIf="filteredProperties.length > 0; else noResults">
+      <app-property-card 
+        *ngFor="let property of filteredProperties.slice(0, itemsToShow); let i = index"
+        [property]="property"
+        [priority]="i === 0"
+        (viewDetail)="openPropertyDetail($event)">
+      </app-property-card>
+
+      <div class="load-more-container m-top-20" *ngIf="filteredProperties.length > itemsToShow">
+        <button class="btn-load-more" (click)="loadMore()">VER MÁS <i class="fas fa-chevron-down"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Componentes Compartidos -->
+  <ng-template #noResults>
+    <div class="premium-empty-state">
+      <i class="fas fa-search-location"></i>
+      <h2>Sin coincidencias</h2>
+      <button (click)="clearFilters()">RESETEAR</button>
+    </div>
+  </ng-template>
+
+  <app-detalle-propiedad *ngIf="selectedPropertyId" [propertyInput]="selectedProperty" [propertyIdInput]="selectedPropertyId" (close)="closePropertyDetail()"></app-detalle-propiedad>
+
+</div>

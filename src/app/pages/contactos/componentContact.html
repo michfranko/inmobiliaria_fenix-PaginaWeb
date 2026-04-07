@@ -1,0 +1,69 @@
+<!-- Sección de Contactos y Propiedades -->
+<section id="contact-section" class="contact-section container">
+  <div class="contact-panel">
+    <!-- === Cuadro: Formulario === -->
+    <div class="contact-card">
+      <h2>Crear nuevo contacto</h2>
+      <form class="form-grid" novalidate>
+        <div class="field">
+          <label for="nombres">Nombres</label>
+          <input id="nombres" type="text" placeholder="Nombres" />
+        </div>
+
+        <div class="field">
+          <label for="apellidos">Apellidos</label>
+          <input id="apellidos" type="text" placeholder="Apellidos" />
+        </div>
+
+        <div class="field">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" type="tel" placeholder="+56 9 1234 5678" />
+        </div>
+
+        <div class="field">
+          <label for="rol">Rol</label>
+          <div class="custom-select">
+            <select id="rol">
+              <option value="propietario">Propietario</option>
+              <option value="responsable">Responsable</option>
+              <option value="ainmobiliaria">Inmobiliaria</option>
+              <option value="Terciario">Terciario</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn">Crear nuevo contacto</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- === Cuadro: Lista de contactos existentes === -->
+  <aside class="contacts-list">
+    <h3>Contactos existentes</h3>
+    <ul>
+      <li class="contact-item">
+        <div class="meta">
+          <strong>Ana Gómez</strong> <span class="role">Propietario</span>
+        </div>
+        <div class="phone">+56 9 9876 5432</div>
+      </li>
+
+      <li class="contact-item">
+        <div class="meta">
+          <strong>Carlos Ruiz</strong> <span class="role">Responsable</span>
+        </div>
+        <div class="phone">+56 2 2345 6789</div>
+      </li>
+
+      <li class="contact-item">
+        <div class="meta">
+          <strong>María López</strong> <span class="role">Propietario</span>
+        </div>
+        <div class="phone">+56 9 1122 3344</div>
+      </li>
+    </ul>
+  </aside>
+</section>

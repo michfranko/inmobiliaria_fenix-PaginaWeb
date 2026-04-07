@@ -1,0 +1,145 @@
+<div class="detalle-overlay" *ngIf="property">
+  <div class="detalle-modal">
+    <!-- Botón de Cerrar (X) -->
+    <button class="close-modal-btn" (click)="goBack()">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <div class="detalle-content">
+      <!-- Sección de Imagen (Rendimiento Extremo con etiquetas estándar) -->
+      <div class="detalle-visual">
+        <div class="image-wrapper">
+          
+          <!-- Imagen Principal: Usamos [src] estándar con fetchpriority para evitar errores de framework y ganar velocidad -->
+          <ng-container *ngIf="property.imagenes && property.imagenes.length > 0">
+            <img 
+              [src]="property.imagenes[currentImageIndex]" 
+              alt="Imagen de la propiedad" 
+              class="imagen-principal active"
+              style="object-fit: cover; width: 100%; height: 100%;"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </ng-container>
+
+          <!-- PRE-CARGA AGRESIVA: Forzamos al navegador a descargar TODAS las fotos en ráfaga -->
+          <div class="aggressive-preloader" style="display: none;">
+            <img *ngFor="let img of property.imagenes" [src]="img" loading="eager" fetchpriority="high">
+          </div>
+
+          <!-- Fallback si no hay imágenes -->
+          <img 
+            *ngIf="!property.imagenes || property.imagenes.length === 0"
+            src="assets/no-image.svg" 
+            alt="Sin imagen" 
+            class="imagen-principal active"
+            style="object-fit: cover; width: 100%; height: 100%;"
+          />
+          
+          <!-- Botones de navegación -->
+          <ng-container *ngIf="property.imagenes && property.imagenes.length > 1">
+            <button class="nav-btn prev" (click)="previousImage()">&#10094;</button>
+            <button class="nav-btn next" (click)="nextImage()">&#10095;</button>
+          </ng-container>
+        
+          <div class="image-counter" *ngIf="property.imagenes && property.imagenes.length > 1">
+            {{ currentImageIndex + 1 }} / {{ property.imagenes.length }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Información -->
+      <div class="detalle-data">
+        <div class="header-info">
+          <span class="property-tag">{{ property.Estado }}</span>
+          <h2>{{ property.TipoPropiedad }}</h2>
+          <p class="precio">${{ property.Precio_Venta }}</p>
+          <p class="ubicacion"><i class="fas fa-map-marker-alt"></i> {{ property.CIUDAD }} - {{ property.Direccion_Sector }}</p>
+        </div>
+
+        <div class="specs-grid">
+          <div class="spec-item">
+            <i class="fas fa-expand-arrows-alt"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.AreaCons }} m2</span>
+              <span class="label">Construcción</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <i class="fas fa-ruler-combined"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.AreaTerreno }} m2</span>
+              <span class="label">Terreno</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <i class="fas fa-bed"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.HAB }}</span>
+              <span class="label">Habs.</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <i class="fas fa-bath"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.BNO }}</span>
+              <span class="label">Baños</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <i class="fas fa-warehouse"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.BDG || '0' }}</span>
+              <span class="label">Bodega</span>
+            </div>
+          </div>
+          <div class="spec-item">
+            <i class="fas fa-hashtag"></i>
+            <div class="spec-label">
+              <span class="value">{{ property.IPD }}</span>
+              <span class="label">Código</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección de Mapa de Ubicación -->
+        <div class="map-section" *ngIf="property.LinkMapa">
+          <h4 class="section-title"><i class="fas fa-map-marked-alt"></i> Ubicación exacta</h4>
+          
+          <!-- Caso 1: El usuario puso un link de "Insertar mapa" -->
+          <div class="map-container" *ngIf="esLinkEmbebible()">
+            <iframe 
+              [src]="getSafeMapUrl()" 
+              width="100%" 
+              height="250" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+
+          <!-- Caso 2: El usuario puso un link normal de Google Maps (Compartir) -->
+          <div class="external-map-btn" *ngIf="!esLinkEmbebible()">
+            <a [href]="property.LinkMapa" target="_blank" class="btn-map-link">
+              <i class="fas fa-external-link-alt"></i> VER UBICACIÓN EN GOOGLE MAPS
+            </a>
+            <p class="map-tip">Haz clic para abrir la ubicación exacta en el mapa.</p>
+          </div>
+        </div>
+
+        <div class="footer-actions">
+          <div class="action-buttons">
+            <a [href]="createWhatsappLink(property)" target="_blank" class="btn btn-whatsapp">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <div class="secondary-btns">
+              <button (click)="compartirPagina()" class="btn-icon">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

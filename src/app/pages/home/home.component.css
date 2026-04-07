@@ -1,0 +1,141 @@
+/* Contenedor General */
+.home-wrapper {
+  background-color: #000;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ========================================== */
+/* ESTILOS ESCRITORIO (EXISTENTES)            */
+/* ========================================== */
+.todo { position: relative; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: brightness(0.4); }
+.hero-container { position: relative; z-index: 2; text-align: center; max-width: 800px; padding: 20px; }
+.main-cta-area h1 { font-size: 4rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -1px; text-transform: uppercase; color: #fff; }
+.main-cta-area p { font-size: 1.2rem; margin-bottom: 40px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+.search-button { background: #FFBE2D; color: #000; padding: 18px 45px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+.search-button:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255, 190, 45, 0.3); }
+
+.dest { text-align: center; padding: 60px 0 30px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.dest i { color: #FFBE2D; font-size: 1.5rem; }
+.dest p { font-size: 1.2rem; font-weight: 800; letter-spacing: 3px; color: #fff; margin: 0; }
+
+.status-tabs-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+.status-tabs-container button { background: transparent; border: 1px solid #333; color: #666; padding: 12px 30px; border-radius: 30px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.status-tabs-container button.active { background: #FFBE2D; color: #000; border-color: #FFBE2D; }
+
+.featured-static-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; padding: 0 60px; max-width: 1400px; margin: 0 auto; }
+.view-all-container { text-align: center; padding: 60px 0; }
+.btn-view-all { background: transparent; border: 1px solid #FFBE2D; color: #FFBE2D; padding: 15px 40px; border-radius: 30px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.btn-view-all:hover { background: #FFBE2D; color: #000; }
+
+/* ========================================== */
+/* ESTILOS MÓVIL (APP STYLE)                  */
+/* ========================================== */
+.mobile-home { background-color: #000; }
+
+/* Hero Móvil */
+.m-hero {
+  height: 450px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  overflow: hidden;
+}
+.m-hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.m-hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.4), #000); z-index: 2; }
+.m-hero-content { position: relative; z-index: 3; width: 100%; }
+.m-hero-content h1 { font-size: 2rem; font-weight: 900; margin-bottom: 5px; color: #fff; }
+.m-hero-content .gold { color: #FFBE2D; }
+.m-hero-content p { font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 30px; }
+
+.m-catalogo-btn {
+  background: #FFBE2D;
+  color: #000;
+  border: none;
+  padding: 16px 30px;
+  border-radius: 50px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto;
+  box-shadow: 0 10px 25px rgba(255, 190, 45, 0.3);
+  transition: 0.3s;
+}
+.m-catalogo-btn:active { transform: scale(0.95); }
+
+/* Categorías Móvil */
+.m-categories { padding: 30px 20px; }
+.m-categories h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: #fff; }
+.m-cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+.m-cat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.m-cat-item span { font-size: 0.7rem; font-weight: 700; color: #888; }
+.icon-box {
+  width: 60px; height: 60px; background: #111; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: #FFBE2D; border: 1px solid #222;
+}
+.icon-box.plus { background: #FFBE2D; color: #000; border: none; }
+
+/* Destacados Móvil */
+.m-featured { padding: 0 20px 40px; }
+.m-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.m-section-header h3 { font-size: 1.1rem; font-weight: 800; color: #fff; }
+
+.m-toggle-status { display: flex; background: #111; border-radius: 10px; padding: 4px; border: 1px solid #222; }
+.m-toggle-status button {
+  background: transparent; border: none; color: #555; padding: 6px 15px;
+  border-radius: 8px; font-size: 0.75rem; font-weight: 800; transition: 0.3s;
+}
+.m-toggle-status button.active { background: #222; color: #FFBE2D; }
+
+.m-property-feed { display: flex; flex-direction: column; gap: 20px; }
+.m-card-premium {
+  background: #0d0d0d; border-radius: 24px; overflow: hidden; border: 1px solid #161616;
+}
+.m-card-image { position: relative; height: 220px; }
+.m-card-image img { width: 100%; height: 100%; object-fit: cover; }
+.m-badge { position: absolute; bottom: 15px; left: 15px; background: #FFBE2D; color: #000; padding: 4px 12px; border-radius: 8px; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; }
+
+.m-card-info { padding: 20px; }
+.m-price { font-size: 1.5rem; color: #FFBE2D; font-weight: 900; margin: 0 0 5px 0; }
+.m-loc { font-size: 0.9rem; color: #fff; margin-bottom: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-specs-row { display: flex; gap: 15px; color: #666; font-size: 0.75rem; font-weight: 700; margin-bottom: 20px; }
+.m-specs-row i { color: #FFBE2D; margin-right: 4px; }
+
+/* Nuevas Acciones en Tarjeta Móvil */
+.m-card-actions { display: flex; gap: 10px; align-items: center; border-top: 1px solid #1a1a1a; padding-top: 15px; }
+.m-btn-detail-gold {
+  flex: 1; background: #FFBE2D; color: #000; border: none; padding: 14px; border-radius: 12px;
+  font-weight: 900; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+}
+.m-action-wa {
+  width: 48px; height: 48px; background: #25D366; color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem; text-decoration: none;
+  box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+}
+
+.m-btn-all {
+  width: 100%; background: #111; border: 1px solid #222; color: #fff;
+  padding: 18px; border-radius: 18px; font-weight: 800; font-size: 0.8rem; margin-top: 30px; letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .featured-static-grid { padding: 0 20px; }
+}

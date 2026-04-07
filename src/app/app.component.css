@@ -1,0 +1,16 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que ocupe todo el alto de la pantalla */
+}
+
+.main-content {
+  flex: 1; /* Este elemento crecerá para ocupar el espacio disponible, empujando al footer */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 
+   Los estilos del header y otros botones han sido removidos de aquí 
+   ya que deben estar en sus respectivos componentes para evitar conflictos.
+*/
